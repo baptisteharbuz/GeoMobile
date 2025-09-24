@@ -1,5 +1,5 @@
 {
-  "name": "foreach-wildwatch",
+  "name": "foreach-GeoMobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -12,13 +12,15 @@
     "prebuild": "expo prebuild --clean"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
-    "@rnmapbox/maps": "^10.1.44",
+    "@rnmapbox/maps": "^10.1.45-rc.2",
     "expo": "~54.0.9",
     "expo-constants": "~18.0.9",
     "expo-dev-client": "~6.0.12",
+    "expo-image-picker": "^17.0.8",
     "expo-linking": "~8.0.8",
     "expo-location": "~19.0.7",
     "expo-router": "~6.0.7",

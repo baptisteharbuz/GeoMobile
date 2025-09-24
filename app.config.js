@@ -1,15 +1,15 @@
 export default {
   expo: {
-    name: "Foreach-WildWatch",
-    slug: "Foreach-WildWatch",
+    name: "Foreach-GeoMobile",
+    slug: "Foreach-GeoMobile",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "foreachwildwatch",
+    scheme: "foreachGeoMobile",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
-      bundleIdentifier: "com.yourcompany.foreachWildWatch",
+      bundleIdentifier: "com.yourcompany.foreachGeoMobile",
       supportsTablet: true
     },
     android: {
@@ -21,7 +21,7 @@ export default {
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
-      package: "com.yourcompany.foreachWildWatch"
+      package: "com.yourcompany.foreachGeoMobile"
     },
     web: {
       output: "static",

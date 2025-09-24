@@ -1,25 +1,30 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mapbox from '@rnmapbox/maps';
+import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MarkerModal from '../components/MarkerModal';
 import { useMarkerModal } from '../hooks/useMarkerModal';
 import { Marker } from '../types/Marker';
-import MarkerModal from './MarkerModal';
+import { filterMapboxLogs, initializeMapbox } from '../utils/mapboxConfig';
 
-Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN!);
+// Initialiser MapBox et filtrer les logs
+initializeMapbox();
+filterMapboxLogs();
 
-interface CustomMapViewProps {
+interface MapScreenProps {
   style?: any;
   latitude?: number;
   longitude?: number;
 }
 
-
-
-export default function CustomMapView({ style, latitude, longitude }: Readonly<CustomMapViewProps>) {
+export default function MapScreen({ style, latitude, longitude }: Readonly<MapScreenProps>) {
+  const insets = useSafeAreaInsets();
   const [markers, setMarkers] = useState<Marker[]>([]);
   const animatedScale = useRef(new Animated.Value(1)).current;
   const [recentlyAddedId, setRecentlyAddedId] = useState<string | null>(null);
+  const [draggedMarkerId, setDraggedMarkerId] = useState<string | null>(null);
 
   const handleSaveMarker = (marker: Marker) => {
     const updated = [...markers, marker];
@@ -40,6 +45,26 @@ export default function CustomMapView({ style, latitude, longitude }: Readonly<C
     const updated = markers.filter(m => m.id !== markerId);
     setMarkers(updated);
     saveMarkers(updated);
+  };
+
+  const handleMarkerDragStart = (markerId: string) => {
+    setDraggedMarkerId(markerId);
+    console.log(`🫳 Début du déplacement du marqueur ${markerId}`);
+  };
+
+  const handleMarkerDragEnd = (markerId: string, coordinate: number[]) => {
+    const [longitude, latitude] = coordinate;
+    console.log(`📍 Marqueur ${markerId} déplacé vers:`, latitude.toFixed(6), longitude.toFixed(6));
+    
+    // Mettre à jour la position du marqueur
+    const updated = markers.map(m => 
+      m.id === markerId 
+        ? { ...m, latitude, longitude }
+        : m
+    );
+    setMarkers(updated);
+    saveMarkers(updated);
+    setDraggedMarkerId(null);
   };
 
   const {
@@ -98,11 +123,21 @@ export default function CustomMapView({ style, latitude, longitude }: Readonly<C
   const coordinates: [number, number] = [longitude, latitude];
 
   return (
-    <>
+    <View style={styles.container}>
+      <StatusBar style="dark" />
+      {/* Barre de coordonnées */}
+      <View style={[styles.coordinatesBar, { top: insets.top + 10 }]}>
+        <Text style={styles.coordinatesText}>
+          📍 Lat: {latitude?.toFixed(6)} | Lon: {longitude?.toFixed(6)}
+        </Text>
+      </View>
+
       <Mapbox.MapView
         style={[styles.map, style]}
         styleURL={Mapbox.StyleURL.Street}
         onPress={handleMapPress}
+        logoEnabled={false}
+        attributionEnabled={false}
       >
         <Mapbox.Camera
           centerCoordinate={coordinates}
@@ -119,13 +154,22 @@ export default function CustomMapView({ style, latitude, longitude }: Readonly<C
         {markers.map((marker) => (
           <Mapbox.PointAnnotation
             key={marker.id}
-            id={marker.id}
+            id={`marker-${marker.id}`}
             coordinate={[marker.longitude, marker.latitude]}
             title={marker.title}
             onSelected={() => openEditModal(marker)}
+            draggable={true}
+            onDragStart={() => handleMarkerDragStart(marker.id)}
+            onDragEnd={(feature) => handleMarkerDragEnd(marker.id, feature.geometry.coordinates)}
           >
-            <Animated.View style={[styles.markerWrap, recentlyAddedId === marker.id ? { transform: [{ scale: animatedScale }] } : undefined]}>
-              <View style={styles.marker} />
+            <Animated.View style={[
+              styles.markerWrap, 
+              recentlyAddedId === marker.id ? { transform: [{ scale: animatedScale }] } : undefined
+            ]}>
+              <View style={[
+                styles.marker, 
+                draggedMarkerId === marker.id && styles.markerDragging
+              ]} />
               <Text style={styles.markerLabel} numberOfLines={1}>{marker.title}</Text>
               {marker.imageUrl ? (
                 <Image source={{ uri: marker.imageUrl }} style={styles.markerThumb} />
@@ -149,11 +193,33 @@ export default function CustomMapView({ style, latitude, longitude }: Readonly<C
         onDelete={handleDelete}
         onCancel={closeModal}
       />
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  coordinatesBar: {
+    position: 'absolute',
+    left: 10,
+    right: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 8,
+    zIndex: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  coordinatesText: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontFamily: 'monospace',
+  },
   map: {
     flex: 1,
   },
@@ -169,6 +235,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  markerDragging: {
+    backgroundColor: '#4CAF50',
+    transform: [{ scale: 1.2 }],
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 8,
   },
   markerWrap: {
     alignItems: 'center',

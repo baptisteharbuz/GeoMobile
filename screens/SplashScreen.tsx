@@ -1,10 +1,12 @@
+import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function SplashScreen() {
   return (
     <View style={styles.container}>
+      <StatusBar style="light" />
       <Text style={styles.title}>GeoMobile</Text>
-      <Text style={styles.subtitle}>Wildlife Tracking App</Text>
+      <Text style={styles.subtitle}>Localisation en temps réel</Text>
     </View>
   );
 }

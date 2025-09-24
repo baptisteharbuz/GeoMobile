@@ -1,7 +1,9 @@
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
-import { Alert, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SelectedLocation } from '../types/Marker';
+import Button from './Button';
+import Input from './Input';
 
 interface MarkerModalProps {
   visible: boolean;
@@ -86,21 +88,20 @@ export default function MarkerModal({
           )}
 
           <View style={styles.form}>
-            <Text style={styles.inputLabel}>Nom</Text>
-            <TextInput
-              style={styles.input}
+            <Input
+              label="Nom"
               value={title}
               onChangeText={onTitleChange}
               placeholder="Nom du point"
             />
-            <Text style={styles.inputLabel}>Observation</Text>
-             <TextInput
-               style={styles.input}
-               value={observation}
-               onChangeText={onObservationChange}
-               placeholder="Observation"
-             />
-            <Text style={styles.inputLabel}>Image</Text>
+            <Input
+              label="Observation"
+              value={observation}
+              onChangeText={onObservationChange}
+              placeholder="Observation"
+              multiline
+            />
+            <Text style={styles.imageLabel}>Image</Text>
             <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
               <Text style={styles.imageButtonText}>
                 {imageUrl ? '📷 Changer l\'image' : '📷 Sélectionner une image'}
@@ -120,31 +121,27 @@ export default function MarkerModal({
           </View>
 
           <View style={styles.modalButtons}>
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+            <Button
+              title="Annuler"
+              variant="secondary"
               onPress={onCancel}
-            >
-              <Text style={styles.buttonText}>Annuler</Text>
-            </TouchableOpacity>
+              style={styles.button}
+            />
 
-            <TouchableOpacity
-              style={[styles.button, styles.addButton]}
+            <Button
+              title="Enregistrer"
+              variant="primary"
               onPress={onSave}
-            >
-              <Text style={[styles.buttonText, styles.addButtonText]}>
-                Enregistrer
-              </Text>
-            </TouchableOpacity>
+              style={styles.button}
+            />
             
             {mode === 'edit' && (
-              <TouchableOpacity
-                style={[styles.button, styles.deleteButton]}
+              <Button
+                title="Supprimer"
+                variant="danger"
                 onPress={onDelete}
-              >
-                <Text style={[styles.buttonText, styles.addButtonText]}>
-                  Supprimer
-                </Text>
-              </TouchableOpacity>
+                style={styles.button}
+              />
             )}
           </View>
             </View>
@@ -159,7 +156,7 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: 'white',
@@ -190,21 +187,14 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
     marginBottom: 5,
   },
+  imageLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 6,
+    color: '#333',
+  },
   form: {
     gap: 8,
-  },
-  inputLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-    backgroundColor: '#fff',
   },
   imageButton: {
     borderWidth: 1,
@@ -214,6 +204,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     backgroundColor: '#f8f9ff',
+    marginBottom: 15,
   },
   imageButtonText: {
     color: '#007AFF',
@@ -265,12 +256,5 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: '#FF3B30',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  addButtonText: {
-    color: 'white',
   },
 });

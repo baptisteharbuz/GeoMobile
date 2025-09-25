@@ -41,8 +41,8 @@ export const useMarkerModal = (
   };
 
   const tryHapticSuccess = () => {
-    Haptics.notificationAsync?.(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    Haptics.impactAsync?.(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+    Haptics.notificationAsync?.(Haptics.NotificationFeedbackType.Success).catch(() => { });
+    Haptics.impactAsync?.(Haptics.ImpactFeedbackStyle.Heavy).catch(() => { });
   };
 
   const handleSave = async () => {
@@ -63,7 +63,7 @@ export const useMarkerModal = (
       closeModal();
       Alert.alert('✅', 'Position sauvegardée !');
     }
-    
+
     if (modalMode === 'edit' && editingMarkerId) {
       onUpdateMarker(editingMarkerId, {
         title: formTitle,
@@ -100,14 +100,14 @@ export const useMarkerModal = (
     formObservation,
     formImageUrl,
     formDate,
-    
+
     // Actions
     openCreateModal,
     openEditModal,
     handleSave,
     handleDelete,
     closeModal,
-    
+
     // Form handlers
     setFormTitle,
     setFormObservation,

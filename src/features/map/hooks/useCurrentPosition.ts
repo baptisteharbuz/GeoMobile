@@ -11,7 +11,7 @@ export const useCurrentPosition = () => {
       const position = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
-      
+
       console.log('📍 Position:', position.coords.latitude, position.coords.longitude);
 
       setLocation({
@@ -28,7 +28,7 @@ export const useCurrentPosition = () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       setHasPermission(status === 'granted');
-      
+
       if (status === 'granted') {
         await getLocationData();
       }

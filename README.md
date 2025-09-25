@@ -1,60 +1,69 @@
-# 🐾 WildWatch - Application de Suivi Géolocalisé
+# 🐾 WildWatch
 
-Application React Native avec MapBox permettant de sauvegarder des points d'intérêt avec photos et observations.
+Application React Native (Expo + Expo Router) avec Mapbox pour enregistrer des observations géolocalisées.
 
-## 🚀 Installation et lancement
+## 🚀 Démarrage rapide
 
 ### Prérequis
 - Node.js
-- iOS Simulator ou iPhone physique
-- Compte MapBox (pour le token)
+- iOS Simulator ou appareil iOS/Android
+- Compte Mapbox (tokens requis)
 
 ### Configuration
-1. Créer un fichier `.env` à la racine :
+1) Créer un fichier `.env` à la racine:
 ```bash
-EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN=your_mapbox_token_here
+EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN=YOUR_MAPBOX_PUBLIC_TOKEN
+MAPBOX_DOWNLOAD_TOKEN=YOUR_MAPBOX_DOWNLOAD_TOKEN
 ```
-
-2. Installer les dépendances :
+2) Installer les dépendances:
 ```bash
 npm install
 ```
-
-### Lancement
+3) Lancer le projet:
 ```bash
-# iOS Simulator
+# Dev server
+npm start
+
+# iOS (build local via Dev Client)
 npm run ios
 
-# Android
+# Android (build local via Dev Client)
 npm run android
 
-# Web (développement)
+# Web (optionnel)
 npm run web
 ```
 
-## 📱 Fonctionnalités
+## 📦 Scripts utiles
+- `npm start` : démarre Metro/Expo
+- `npm run ios` / `npm run android` : build natif + lancement
+- `npm run lint` : lint du projet
+- `npm run prebuild` : régénérer iOS/Android (si config native a changé)
 
-- **Géolocalisation** : Position GPS en temps réel
-- **Marqueurs personnalisés** : Ajout de points avec nom, observation et photo
-- **Navigation** : Gestion des écrans avec expo-router
-- **Persistance** : Sauvegarde locale des marqueurs
-- **Permissions** : Gestion native des autorisations de localisation
-
-## 🏗️ Architecture
-
+## 🗂️ Structure du projet
 ```
-├── app/                    # Navigation (expo-router)
-├── screens/               # Écrans principaux
-├── components/            # Composants réutilisables
-├── hooks/                 # Hooks personnalisés
-├── types/                 # Types TypeScript
-└── utils/                 # Utilitaires
+src/
+  app/                       # Expo Router (_layout.tsx, index.tsx)
+  components/                # UI réutilisable
+  features/
+    map/                     # Carte Mapbox (écran, hooks, styles, config)
+    marker/                  # Modale marqueur (form, hooks, types)
+    splash/                  # Écran de splash
+    error/                   # Écran d’erreur
 ```
 
-## 🔧 Scripts disponibles
+## ✨ Fonctionnalités principales
+- Carte Mapbox, position en temps réel
+- Ajouter/éditer/supprimer des marqueurs (titre, observation, image, date)
+- DatePicker natif (`@react-native-community/datetimepicker`)
+- Haptique à l’ajout/enregistrement (expo-haptics)
+- Partage natif (React Native `Share`)
+- Recentrage sur la position utilisateur
+- Persistance locale (AsyncStorage)
 
-- `npm start` - Démarrer le serveur Expo
-- `npm run ios` - Lancer sur iOS
-- `npm run android` - Lancer sur Android
-- `npm run lint` - Vérifier le code
-- `npx tsc` - Vérifier TypeScript
+## 🔐 Notes Mapbox
+- `EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN` est utilisé côté app
+- `MAPBOX_DOWNLOAD_TOKEN` est lu au build natif (plugin `@rnmapbox/maps`)
+
+---
+Minimal, à jour et prêt à l’emploi. ✅

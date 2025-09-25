@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import { Marker, SelectedLocation } from '../types/Marker';
@@ -15,12 +16,14 @@ export const useMarkerModal = (
   const [formTitle, setFormTitle] = useState('');
   const [formObservation, setFormObservation] = useState('');
   const [formImageUrl, setFormImageUrl] = useState('');
+  const [formDate, setFormDate] = useState('');
 
   const openCreateModal = (location: SelectedLocation) => {
     setSelectedLocation(location);
     setFormTitle(`Point ${markers.length + 1}`);
     setFormObservation('');
     setFormImageUrl('');
+    setFormDate(new Date().toISOString());
     setModalMode('create');
     setEditingMarkerId(null);
     setModalVisible(true);
@@ -32,11 +35,19 @@ export const useMarkerModal = (
     setFormTitle(marker.title);
     setFormObservation(marker.observation || '');
     setFormImageUrl(marker.imageUrl || '');
+    setFormDate(marker.date || new Date().toISOString());
     setSelectedLocation({ latitude: marker.latitude, longitude: marker.longitude });
     setModalVisible(true);
   };
 
-  const handleSave = () => {
+  const tryHapticSuccess = () => {
+    Haptics.notificationAsync?.(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    Haptics.impactAsync?.(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
+  };
+
+  const handleSave = async () => {
+    tryHapticSuccess();
+
     if (modalMode === 'create' && selectedLocation) {
       const newMarker: Marker = {
         id: Date.now().toString(),
@@ -45,6 +56,7 @@ export const useMarkerModal = (
         title: formTitle || `Point ${markers.length + 1}`,
         observation: formObservation || undefined,
         imageUrl: formImageUrl || undefined,
+        date: formDate,
         createdAt: new Date().toISOString(),
       };
       onSaveMarker(newMarker);
@@ -57,6 +69,7 @@ export const useMarkerModal = (
         title: formTitle,
         observation: formObservation || undefined,
         imageUrl: formImageUrl || undefined,
+        date: formDate,
       });
       closeModal();
     }
@@ -75,6 +88,7 @@ export const useMarkerModal = (
     setFormTitle('');
     setFormObservation('');
     setFormImageUrl('');
+    setFormDate('');
   };
 
   return {
@@ -85,6 +99,7 @@ export const useMarkerModal = (
     formTitle,
     formObservation,
     formImageUrl,
+    formDate,
     
     // Actions
     openCreateModal,
@@ -97,5 +112,6 @@ export const useMarkerModal = (
     setFormTitle,
     setFormObservation,
     setFormImageUrl,
+    setFormDate,
   };
 };

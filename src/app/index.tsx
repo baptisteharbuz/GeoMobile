@@ -1,8 +1,8 @@
 import React from 'react';
-import { useCurrentPosition } from '../hooks/useCurrentPosition';
-import ErrorScreen from '../screens/ErrorScreen';
-import MapScreen from '../screens/MapScreen';
-import SplashScreen from '../screens/SplashScreen';
+import ErrorScreen from '../features/error/screens/ErrorScreen';
+import { useCurrentPosition } from '../features/map/hooks/useCurrentPosition';
+import MapScreen from '../features/map/screens/MapScreen';
+import SplashScreen from '../features/splash/screens/SplashScreen';
 
 export default function Index() {
   const { location, loading, hasPermission, requestPermission } = useCurrentPosition();

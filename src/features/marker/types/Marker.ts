@@ -5,6 +5,7 @@ export interface Marker {
   title: string;
   observation?: string;
   imageUrl?: string;
+  date?: string; // Date d'observation au format ISO
   createdAt: string;
 }
 

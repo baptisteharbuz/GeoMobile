@@ -18,26 +18,30 @@ export const filterMapboxLogs = () => {
     const originalError = console.error;
     const originalWarn = console.warn;
     
+    // Patterns d'erreurs MapBox à ignorer
+    const ignoredPatterns = [
+      'MapLoad error Source RNMBX-mapview-point-annotations_drag',
+      'RNMBX-mapview-point-annotations_drag is not in style',
+      'MapLoad error Source RNMBX-mapview-callouts_drag',
+      'RNMBX-mapview-callouts_drag is not in style'
+    ];
+    
+    const shouldIgnoreMessage = (message: string): boolean => {
+      return ignoredPatterns.some(pattern => message.includes(pattern));
+    };
+    
     console.error = (...args: any[]) => {
       const message = args.join(' ');
-      if (
-        message.includes('MapLoad error Source RNMBX-mapview-point-annotations_drag') ||
-        message.includes('RNMBX-mapview-point-annotations_drag is not in style')
-      ) {
-        return; // Ignorer ces erreurs spécifiques
+      if (!shouldIgnoreMessage(message)) {
+        originalError.apply(console, args);
       }
-      originalError.apply(console, args);
     };
     
     console.warn = (...args: any[]) => {
       const message = args.join(' ');
-      if (
-        message.includes('MapLoad error Source RNMBX-mapview-point-annotations_drag') ||
-        message.includes('RNMBX-mapview-point-annotations_drag is not in style')
-      ) {
-        return; // Ignorer ces warnings spécifiques
+      if (!shouldIgnoreMessage(message)) {
+        originalWarn.apply(console, args);
       }
-      originalWarn.apply(console, args);
     };
   }
 };
